@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+AccountMs,com.bank.AccountMs.service.impl,CuentaServiceImpl,5,162,1,13,1,30,1,15,0,9
+AccountMs,com.bank.AccountMs.client,ClienteClient,0,25,0,0,0,7,0,3,0,3
+AccountMs,com.bank.AccountMs.model,TipoCuenta,0,15,0,0,0,3,0,1,0,1
+AccountMs,com.bank.AccountMs.exception,CuentaException,0,4,0,0,0,2,0,1,0,1
+AccountMs,com.bank.AccountMs.exception,GlobalExceptionHandler,110,37,6,0,24,10,8,4,5,4
+AccountMs,com.bank.AccountMs.exception,SaldoInsuficienteException,0,4,0,0,0,2,0,1,0,1
+AccountMs,com.bank.AccountMs.exception,ClienteNotFoundException,4,0,0,0,2,0,1,0,1,0
+AccountMs,com.bank.AccountMs.exception,InvalidDataTypeException,4,0,0,0,2,0,1,0,1,0
+AccountMs,com.bank.AccountMs.config,RestTemplateConfig,0,6,0,0,0,2,0,2,0,2
+AccountMs,com.bank.AccountMs,AccountMsApplication,5,3,0,0,2,1,1,1,1,1
+AccountMs,com.bank.AccountMs.controller,CuentaController,0,61,0,2,0,14,0,7,0,6

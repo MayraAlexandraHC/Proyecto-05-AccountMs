@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CuentaController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AccountMs</a> &gt; <a href="index.source.html" class="el_package">com.bank.AccountMs.controller</a> &gt; <span class="el_source">CuentaController.java</span></div><h1>CuentaController.java</h1><pre class="source lang-java linenums">package com.bank.AccountMs.controller;
+
+import com.bank.AccountMs.model.Cuenta;
+import com.bank.AccountMs.model.Transaccion;
+import com.bank.AccountMs.service.CuentaService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/cuentas&quot;)
+@RequiredArgsConstructor
+public class CuentaController {
+    private final CuentaService cuentaService;
+
+    @PostMapping
+    public ResponseEntity&lt;Cuenta&gt; crearCuenta(@Valid @RequestBody Cuenta cuenta) {
+<span class="fc" id="L22">        Cuenta cuentaCreada = cuentaService.crearCuenta(cuenta);</span>
+<span class="fc" id="L23">        return new ResponseEntity&lt;&gt;(cuentaCreada, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Cuenta&gt;&gt; listarCuentas(
+            @RequestParam(required = false) Integer clienteId) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (clienteId != null) {</span>
+<span class="fc" id="L30">            List&lt;Cuenta&gt; cuentas = cuentaService.listarCuentasPorClienteId(clienteId);</span>
+<span class="fc" id="L31">            return ResponseEntity.ok(cuentas);</span>
+        }
+<span class="fc" id="L33">        return ResponseEntity.ok(cuentaService.listarCuentas());</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Cuenta&gt; obtenerCuenta(@PathVariable Integer id) {
+<span class="fc" id="L38">        Cuenta cuenta = cuentaService.obtenerCuentaPorId(id);</span>
+<span class="fc" id="L39">        return ResponseEntity.ok(cuenta);</span>
+    }
+
+    @PutMapping(&quot;/{cuentaId}/depositar&quot;)
+    public ResponseEntity&lt;Cuenta&gt; depositarDinero(
+            @PathVariable Integer cuentaId,
+            @Valid @RequestBody Transaccion transaccion) {
+<span class="fc" id="L46">        Cuenta cuenta = cuentaService.depositarDinero(cuentaId, transaccion.getMonto());</span>
+<span class="fc" id="L47">        return ResponseEntity.ok(cuenta);</span>
+    }
+
+    @PutMapping(&quot;/{cuentaId}/retirar&quot;)
+    public ResponseEntity&lt;Cuenta&gt; retirarDinero(
+            @PathVariable Integer cuentaId,
+            @Valid @RequestBody Transaccion transaccion) {
+<span class="fc" id="L54">        Cuenta cuenta = cuentaService.retirarDinero(cuentaId, transaccion.getMonto());</span>
+<span class="fc" id="L55">        return ResponseEntity.ok(cuenta);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; eliminarCuenta(@PathVariable Integer id) {
+<span class="fc" id="L60">        cuentaService.eliminarCuenta(id);</span>
+<span class="fc" id="L61">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

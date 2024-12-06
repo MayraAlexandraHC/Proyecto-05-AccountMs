@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AccountMs</a> &gt; <a href="index.source.html" class="el_package">com.bank.AccountMs.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.bank.AccountMs.exception;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestControllerAdvice
+<span class="fc" id="L18">public class GlobalExceptionHandler {</span>
+
+    @ExceptionHandler(CuentaException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleCuentaException(CuentaException ex) {
+<span class="fc" id="L22">        ErrorResponse error = buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L23">        return new ResponseEntity&lt;&gt;(error, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleSaldoInsuficienteException(SaldoInsuficienteException ex) {
+<span class="fc" id="L28">        ErrorResponse error = buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L29">        return new ResponseEntity&lt;&gt;(error, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleMessageNotReadableException(HttpMessageNotReadableException ex) {
+<span class="nc" id="L34">        String message = &quot;Error en el formato de datos: &quot;;</span>
+
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (ex.getMessage().contains(&quot;tipoCuenta&quot;)) {</span>
+<span class="nc" id="L37">            message += &quot;El tipo de cuenta debe ser AHORROS o CORRIENTE&quot;;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        } else if (ex.getMessage().contains(&quot;clienteId&quot;)) {</span>
+<span class="nc" id="L39">            message += &quot;El ID del cliente debe ser un número entero&quot;;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        } else if (ex.getMessage().contains(&quot;monto&quot;)) {</span>
+<span class="nc" id="L41">            message += &quot;El monto debe ser un número válido&quot;;</span>
+        } else {
+<span class="nc" id="L43">            message += &quot;Formato de datos inválido&quot;;</span>
+        }
+
+<span class="nc" id="L46">        ErrorResponse error = buildErrorResponse(message, HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L47">        return new ResponseEntity&lt;&gt;(error, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+<span class="nc" id="L52">        String message = String.format(&quot;El parámetro '%s' debe ser de tipo %s&quot;,</span>
+<span class="nc" id="L53">                ex.getName(),</span>
+<span class="nc" id="L54">                ex.getRequiredType().getSimpleName());</span>
+
+<span class="nc" id="L56">        ErrorResponse error = buildErrorResponse(message, HttpStatus.BAD_REQUEST);</span>
+<span class="nc" id="L57">        return new ResponseEntity&lt;&gt;(error, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+<span class="nc" id="L62">        Map&lt;String, String&gt; errors = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L63">        ex.getBindingResult().getAllErrors().forEach((error) -&gt; {</span>
+<span class="nc" id="L64">            String fieldName = ((FieldError) error).getField();</span>
+<span class="nc" id="L65">            String errorMessage = error.getDefaultMessage();</span>
+<span class="nc" id="L66">            errors.put(fieldName, errorMessage);</span>
+<span class="nc" id="L67">        });</span>
+<span class="nc" id="L68">        return new ResponseEntity&lt;&gt;(errors, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleGenericException(Exception ex) {
+<span class="nc" id="L73">        ErrorResponse error = buildErrorResponse(</span>
+                &quot;Error interno del servidor&quot;,
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+<span class="nc" id="L77">        return new ResponseEntity&lt;&gt;(error, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+    }
+
+    private ErrorResponse buildErrorResponse(String message, HttpStatus status) {
+<span class="fc" id="L81">        return ErrorResponse.builder()</span>
+<span class="fc" id="L82">                .timestamp(LocalDateTime.now())</span>
+<span class="fc" id="L83">                .message(message)</span>
+<span class="fc" id="L84">                .status(status.value())</span>
+<span class="fc" id="L85">                .build();</span>
+    }
+
+    @lombok.Data
+    @lombok.Builder
+    public static class ErrorResponse {
+        private LocalDateTime timestamp;
+
+        private String message;
+
+        private int status;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
